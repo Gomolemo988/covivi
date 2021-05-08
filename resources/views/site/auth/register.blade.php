@@ -1,0 +1,148 @@
+@extends('partials.site')
+@section('content')
+    @include('partials.navbar')
+    <!--================Breadcrumb Area =================-->
+    <section class="breadcrumb_area boi_breadcrumb">
+        <div class="container">
+            <div class="breadcrumb_text">
+                <h6 class="wow fadeInUp">Create your check-in account</h6>
+                <ul class="nav justify-content-center wow fadeInUp" data-wow-delay="0.3s">
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    <li><a href="{{ route('register') }}">Register</a></li>
+                </ul>
+            </div>
+            <div class="row appointment_box">
+                <div class="col-lg-4 appoinment_features">
+                    <div class="shape one" data-parallax='{"y": 100}'>
+                        <img src="{{ asset('assets/images/appoinment/a_img1.png')}}" alt="" />
+                    </div>
+                    <div class="shape two">
+                        <img src="{{ asset('assets/images/appoinment/a_img2.png')}}" alt="" />
+                    </div>
+                    <div class="shape three">
+                        <img src="{{ asset('assets/images/appoinment/a_img3.png')}}" alt="" />
+                    </div>
+                    <div class="shape four" data-parallax='{"x": 30}'>
+                        <img src="{{ asset('assets/images/appoinment/a_img4.png')}}" alt="" />
+                    </div>
+                    <div class="shape five">
+                        <img src="{{ asset('assets/images/appoinment/a_img5.png')}}" alt="" />
+                    </div>
+                    <div class="shape six" data-parallax='{"y": 50}'>
+                        <img src="{{ asset('assets/images/appoinment/a_img6.png')}}" alt="" />
+                    </div>
+                    <h2>Register</h2>
+                    <p>
+                        Please enter your details to create an account on this platform
+                    </p>
+                </div>
+                <div class="col-lg-8">
+                    <form action="#" id="registration_form" method="post" class="appoinment_form">
+                        @csrf
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="employee_code" name="employee_code" placeholder="" />
+                                    <label><i class="linearicons-user"></i>EMPLOYEE CODE</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="email" name="email" placeholder="" />
+                                    <label><i class="linearicons-envelope-open"></i>Your Email
+                                        Address</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="name" name="name" placeholder="" />
+                                    <label><i class="linearicons-user"></i>NAME</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="surname" name="surname" placeholder="" />
+                                    <label><i class="linearicons-user"></i>SURNAME</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="cellphone" name="cellphone" placeholder="" />
+                                    <label><i class="linearicons-phone"></i>Cellphone Number</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="id_number" name="id_number" placeholder="" />
+                                    <label><i class="linearicons-user"></i>Your ID Number</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input class="form-control" type="password" id="password" name="password" placeholder="" />
+                                    <label><i class="linearicons-lock"></i>PASSWORD</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group checkbox_field">
+                                    <div class="checkbox">
+                                        <label>Have an account?
+                                            <span><a href="{{ route('login') }}">Login</a>.</span></label>
+                                    </div>
+                                    <button type="submit" class="green_btn" id="submit">
+                                        Register
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    @include('partials.footer')
+@endsection
+
+@section('javascript')
+    <script type="application/javascript">
+        $(function() {
+            'use strict';
+
+            $("#registration_form").on('submit',(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "{{ route('ajax.register') }}",
+                    type: "POST",
+                    data:  new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData:false,
+                    beforeSend : function()
+                    {
+                        $("#registration_form").LoadingOverlay("show");
+                        $('#submit').attr("disabled", true);
+                    },
+                    success: function(response)
+                    {
+                        if(response.status == 'failed'){
+                            $("#registration_form").LoadingOverlay("hide");
+                            $('#submit').attr("disabled", false);
+                            iziToast.error({title: 'OOPS!', position: 'center', message: response.message});
+
+                        } else {
+                            $("#registration_form").LoadingOverlay("hide");
+                            $('#submit').attr("disabled", false);
+                            iziToast.success({title: 'Hey!', position: 'center', message: response.message});
+
+                            document.addEventListener('iziToast-closed', function(data){
+                                window.location.replace('{{route('login')}}');
+                            });
+                        }
+                    }
+                });
+            }));
+        });
+    </script>
+@endsection
